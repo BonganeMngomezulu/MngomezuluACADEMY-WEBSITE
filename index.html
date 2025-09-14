@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MNGOMEZULU ACADEMY - Login & Portal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    :root {
+      --primary: #FFCA3A;
+      --dark-bg: #1f1f2e;
+      --dark-bg-alt: #292a3c;
+      --dark-text: #eee;
+      --light-bg: #ffffff;
+      --light-text: #222;
+      --transition: 0.3s ease;
+      --shadow: rgba(0,0,0,0.3);
+    }
+
+    /* Dark Theme by default */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark-bg); 
+      color: var(--dark-text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background var(--transition), color var(--transition);
+    }
+    body.light {
+      background: var(--light-bg);
+      color: var(--light-text);
+    }
+
+    header {
+      background: var(--dark-bg-alt);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 10px var(--shadow);
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    body.light header {
+      background: #f9f9f9;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 2rem;
+      letter-spacing: 3px;
+      cursor: default;
+      user-select: none;
+    }
+
+    nav a {
+      color: var(--dark-text);
+      text-decoration: none;
+      margin-left: 1.8rem;
+      font-weight: 600;
+      font-size: 1rem;
+      position: relative;
+      transition: color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    nav a.active,
+    nav a:hover {
+      color: var(--primary);
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2.5px;
+      background: var(--primary);
+      bottom: -6px;
+      left: 0;
+      border-radius: 2px;
+      transition: width var(--transition);
+    }
+    nav a.active::after,
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 3rem auto 4rem;
+      padding: 0 1.2rem;
+      flex-grow: 1;
+    }
+    section {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      text-shadow: 0 0 8px var(--primary);
+      user-select: none;
+    }
+    p {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      color: inherit;
+      user-select: text;
+    }
+
+    a.inline-link {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    a.inline-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    footer {
+      background: var(--dark-bg-alt);
+      padding: 2rem 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+      box-shadow: inset 0 1px 5px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    body.light footer {
+      background: #f1f1f1;
+      color: #555;
+      box-shadow: inset 0 1px 5px rgba(255,255,255,0.5);
+    }
+
+    /* Buttons */
+    button, input[type=submit] {
+      background: var(--primary);
+      border: none;
+      padding: 0.7rem 1.6rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(255,202,58,0.5);
+      transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+      color: #222;
+      user-select: none;
+    }
+    button:hover, input[type=submit]:hover {
+      background: #f4b400;
+      box-shadow: 0 8px 25px rgba(244,180,0,0.85);
+      transform: translateY(-3px);
+    }
+    button:active, input[type=submit]:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 15px rgba(244,180,0,0.6);
+    }
+
+    /* Form */
+    form {
+      max-width: 420px;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+    input[type=text],
+    input[type=email],
+    input[type=password] {
+      width: 100%;
+      padding: 0.5rem 0.8rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+      margin-bottom: 1rem;
+      transition: box-shadow 0.3s ease;
+    }
+    input[type=text]:focus,
+    input[type=email]:focus,
+    input[type=password]:focus {
+      outline: none;
+      box-shadow: 0 0 10px var(--primary);
+    }
+    .error {
+      color: #ff6b6b;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      user-select: none;
+    }
+    .success {
+      color: #4BB543;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    /* Toggle theme button */
+    #themeToggleBtn {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      padding: 0.2rem 0.8rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    #themeToggleBtn:hover {
+      background: var(--primary);
+      color: #222;
+    }
+
+    /* Welcome message styling */
+    #welcomeMsg {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      main {
+        margin: 2rem 1rem 3rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+      nav a {
+        margin-left: 1rem;
+        font-size: 0.95rem;
+      }
+      form {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>MNGOMEZULU ACADEMY</h1>
+  <nav>
+    <a href="#home" class="nav-link active" data-target="home" tabindex="0">Home</a>
+    <a href="#about" class="nav-link" data-target="about" tabindex="0">About</a>
+    <a href="#contacts" class="nav-link" data-target="contacts" tabindex="0">Contacts</a>
+    <a href="#portal" class="nav-link" data-target="portal" tabindex="0">Student Portal</a>
+  </nav>
+  <button id="themeToggleBtn" aria-label="Toggle light/dark theme">Light Mode</button>
+</header>
+
+<main>
+  <section id="home" class="active" tabindex="0" aria-label="Home section">
+    <h2>Welcome to MNGOMEZULU ACADEMY</h2>
+    <p>Elevate your Food & Beverage career with our expert-led courses, interactive materials, and personal student portal.</p>
+  </section>
+
+  <section id="about" tabindex="0" aria-label="About section">
+    <h2>About Us</h2>
+    <p>MNGOMEZULU Academy offers industry-focused food and beverage training with convenient online learning. Our mission is to empower professionals with skills and knowledge that matter.</p>
+  </section>
+
+  <section id="contacts" tabindex="0" aria-label="Contact section">
+    <h2>Contact Us</h2>
+    <p>Email us at <a href="mailto:contact@fnbacademy.com" class="inline-link">contact@mngomezuluacademy.com</a> or call <strong>068 207 6322<P></P>
+  </section>
+
+  <section id="portal" tabindex="0" aria-label="Student portal section">
+    <h2>Student Portal</h2>
+
+    <div id="welcomeMsg" style="display:none;"></div>
+
+    <div id="authForms">
+      <form id="loginForm" aria-label="Login form" style="margin-bottom:2rem;">
+        <h3>Login</h3>
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" required autocomplete="username" />
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password" />
+        <div id="loginError" class="error" aria-live="assertive"></div>
+        <button type="submit">Login</button>
+      </form>
+
+      <form id="registerForm" aria-label="Register form">
+        <h3>Register</h3>
+        <label for="regUsername">Username</label>
+        <input type="text" id="regUsername" required autocomplete="username" />
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" required autocomplete="new-password" />
+        <div id="registerError" class="error" aria-live="assertive"></div>
+        <div id="registerSuccess" class="success" aria-live="polite"></div>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+
+    <button id="logoutBtn" style="display:none;margin-top:1rem;">Logout</button>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 MNGOMEZULU ACADEMY. All rights reserved.
+</footer>
+
+<script>
+  // Navigation links and section switching
+  const navLinks = document.querySelectorAll('nav a.nav-link');
+  const sections = document.querySelectorAll('main section');
+
+  function activateSection(sectionId) {
+    sections.forEach((sec) => {
+      if (sec.id === sectionId) {
+        sec.classList.add('active');
+        sec.setAttribute('tabindex', '0');
+        sec.focus();
+      } else {
+        sec.classList.remove('active');
+        sec.removeAttribute('tabindex');
+      }
+    });
+    navLinks.forEach((link) => {
+      if (link.dataset.target === sectionId) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  navLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      activateSection(link.dataset.target);
+      clearAuthMessages();
+    });
+  });
+
+  // Theme toggle
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  function updateThemeButton() {
+    if(document.body.classList.contains('light')){
+      themeToggleBtn.textContent = 'Dark Mode';
+      themeToggleBtn.setAttribute('aria-label', 'Switch to dark theme');
+    }else{
+      themeToggleBtn.textContent = 'Light Mode';
+      themeToggleBtn.setAttribute('aria-label', 'Switch to light theme');
+    }
+  }
+  themeToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    updateThemeButton();
+  });
+  updateThemeButton();
+
+  // Basic client-side user "database" using localStorage
+  // User objects: { username: string, password: string (hashed is better but here plain for demo) }
+
+  function getUsers() {
+    return JSON.parse(localStorage.getItem('fnbUsers') || '[]');
+  }
+  function saveUsers(users) {
+    localStorage.setItem('fnbUsers', JSON.stringify(users));
+  }
+
+  // Hash function (simple, not secure but to avoid storing plain text)
+  function simpleHash(str) {
+    let hash = 0, i, chr;
+    if (str.length === 0) return hash.toString();
+    for (i = 0; i < str.length; i++) {
+      chr   = str.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash.toString();
+  }
+
+  // Current logged user, saved in localStorage to persist session
+  function getCurrentUser() {
+    return localStorage.getItem('fnbCurrentUser');
+  }
+  function setCurrentUser(username) {
+    localStorage.setItem('fnbCurrentUser', username);
+  }
+  function clearCurrentUser() {
+    localStorage.removeItem('fnbCurrentUser');
+  }
+
+  // Forms & elements
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const loginError = document.getElementById('loginError');
+  const registerError = document.getElementById('registerError');
+  const registerSuccess = document.getElementById('registerSuccess');
+  const welcomeMsg = document.getElementById('welcomeMsg');
+  const authForms = document.getElementById('authForms');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  function clearAuthMessages() {
+    loginError.textContent = '';
+    registerError.textContent = '';
+    registerSuccess.textContent = '';
+  }
+
+  function showWelcome(username) {
+    welcomeMsg.textContent = `Welcome back, ${username}!`;
+    welcomeMsg.style.display = 'block';
+    authForms.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+  }
+
+  function showAuthForms() {
+    welcomeMsg.style.display = 'none';
+    authForms.style.display = 'block';
+    logoutBtn.style.display = 'none';
+  }
+
+  // On page load, check if user logged in
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = getCurrentUser();
+    if (user) {
+      showWelcome(user);
+      activateSection('portal');
+      setActiveNavLink('portal');
+    }
+  });
+
+  // Login form submit
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearAuthMessages();
+
+    const username = loginForm.loginUsername.value.trim();
+    const password = loginForm.loginPassword.value;
+
+    if (!username || !password) {
+      loginError.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    const users = getUsers();
+    const hashedPW = simpleHash(password);
+    const user = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === hashedPW);
+
+    if (!user) {
+      loginError.textContent = 'Invalid username or password.';
+      return;
+    }
+
+    setCurrentUser(user.username);
+    showWelcome(user.username);
+    loginForm.reset();
+  });
+
+  // Register form submit
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearAuthMessages();
+
+    const username = registerForm.regUsername.value.trim();
+    const password = registerForm.regPassword.value;
+
+    if (!username || !password) {
+      registerError.textContent = 'Please fill in all fields.';
+      registerSuccess.textContent = '';
+      return;
+    }
+    if (username.length < 3) {
+      registerError.textContent = 'Username must be at least 3 characters.';
+      return;
+    }
+    if (password.length < 6) {
+      registerError.textContent = 'Password must be at least 6 characters.';
+      return;
+    }
+
+    let users = getUsers();
+    const userExists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
+    if (userExists) {
+      registerError.textContent = 'Username already exists. Please choose another.';
+      return;
+    }
+
+    // Save user
+    const hashedPW = simpleHash(password);
+    users.push({ username, password: hashedPW });
+    saveUsers(users);
+
+    registerSuccess.textContent = 'Registration successful! You can now log in.';
+    registerForm.reset();
+  });
+
+  // Logout
+  logoutBtn.addEventListener('click', () => {
+    clearCurrentUser();
+    showAuthForms();
+    activateSection('portal');
+  });
+
+  // Helper to highlight nav link on login/logout or programmatically
+  function setActiveNavLink(sectionId) {
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.dataset.target === sectionId);
+    });
+  }
+</script>
+
+</body>
+</html>
